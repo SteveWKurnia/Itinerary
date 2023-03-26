@@ -14,25 +14,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val addTripUseCase: AddTripUseCase,
     private val getAllTripUseCase: GetAllTripUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState>(UiState.Empty)
     val uiState: StateFlow<UiState> = _uiState
 
-    fun addTrip(trip: HomeItems.Trip) {
-        viewModelScope.launch(Dispatchers.IO) {
-            addTripUseCase.invoke(Trip(trip.title))
-        }
-    }
-
     fun getTrip() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 getAllTripUseCase().collect {
                     val items: MutableList<HomeItems> =
-                        it.map { trip -> HomeItems.Trip(trip.title, 0) }
+                        it.map { trip -> HomeItems.Trip(trip.title, trip.image) }
                             .toMutableList()
                     items.add(HomeItems.AddTrip)
 

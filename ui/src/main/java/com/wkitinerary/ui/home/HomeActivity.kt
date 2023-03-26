@@ -1,5 +1,6 @@
 package com.wkitinerary.ui.home
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -34,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -42,6 +44,7 @@ import com.wkitinerary.data.HomeRepositoryImpl
 import com.wkitinerary.data.database.ItineraryDatabase
 import com.wkitinerary.domain.Trip
 import com.wkitinerary.domain.usecase.AddTripUseCase
+import com.wkitinerary.ui.addtrip.AddTripActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -56,6 +59,7 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val uiState = viewModel.uiState.collectAsState()
+            val context = LocalContext.current
 
             LaunchedEffect(Unit) {
                 viewModel.getTrip()
@@ -63,21 +67,16 @@ class HomeActivity : AppCompatActivity() {
 
             when (uiState.value) {
                 HomeViewModel.UiState.Empty -> AddTripButton(onClick = {
-                    viewModel.addTrip(
-                        HomeItems.Trip("Somewhere Trip 2023", R.drawable.stock_image)
-                    )
+                    val intent = Intent(context, AddTripActivity::class.java)
+                    context.startActivity(intent)
                 })
                 is HomeViewModel.UiState.Success -> {
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                         items((uiState.value as HomeViewModel.UiState.Success).trips) { homeItem ->
                             when (homeItem) {
                                 HomeItems.AddTrip -> AddTripButton(onClick = {
-                                    viewModel.addTrip(
-                                        HomeItems.Trip(
-                                            "Somewhere Trip 2023",
-                                            R.drawable.stock_image
-                                        )
-                                    )
+                                    val intent = Intent(context, AddTripActivity::class.java)
+                                    context.startActivity(intent)
                                 })
                                 is HomeItems.Trip -> TripItem(
                                     title = homeItem.title,
@@ -103,7 +102,7 @@ fun TripItem(title: String, imageResource: Int) {
     ) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Image(
-                painter = painterResource(id = R.drawable.stock_image),
+                painter = painterResource(id = imageResource),
                 contentDescription = "Stock Image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()

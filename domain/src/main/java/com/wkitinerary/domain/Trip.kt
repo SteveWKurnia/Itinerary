@@ -1,3 +1,3 @@
 package com.wkitinerary.domain
 
-data class Trip (val title: String)
+data class Trip(val title: String, val image: Int)

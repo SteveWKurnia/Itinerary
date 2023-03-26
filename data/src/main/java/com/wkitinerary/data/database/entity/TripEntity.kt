@@ -9,5 +9,7 @@ data class TripEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     @ColumnInfo(name = "title")
-    val title: String
+    val title: String,
+    @ColumnInfo(name = "image")
+    val image: Int
 )

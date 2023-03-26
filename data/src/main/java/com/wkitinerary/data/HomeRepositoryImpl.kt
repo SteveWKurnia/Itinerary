@@ -6,20 +6,19 @@ import com.wkitinerary.domain.HomeRepository
 import com.wkitinerary.domain.Trip
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
 class HomeRepositoryImpl(
     private val tripDao: TripDao
 ): HomeRepository {
 
     override suspend fun addTrip(trip: Trip) {
-        tripDao.addTrip(TripEntity(title = trip.title))
+        tripDao.addTrip(TripEntity(title = trip.title, image = trip.image))
     }
 
     override suspend fun getTrips(): Flow<List<Trip>> {
         return tripDao.getAllTrip().map {
             it.map { trip ->
-                Trip(trip.title)
+                Trip(trip.title, trip.image)
             }
         }
     }
