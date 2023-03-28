@@ -3,19 +3,23 @@ package com.wkitinerary.ui.addtrip
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.appcompat.R.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -24,18 +28,23 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.itinerary.R
+import com.wkitinerary.ui.composables.DurationField
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -57,7 +66,9 @@ class AddTripActivity : AppCompatActivity() {
                     .padding(all = 10.dp)
             ) {
                 OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 15.dp),
                     value = tripTitle,
                     label = {
                         Text(text = "Trip Title")
@@ -65,12 +76,14 @@ class AddTripActivity : AppCompatActivity() {
                     onValueChange = {
                         tripTitle = it
                     })
-                Spacer(modifier = Modifier.height(15.dp))
+                DurationField()
                 ImagePicker(tripImage) { selectedImageId ->
                     tripImage = selectedImageId
                 }
+                Spacer(modifier = Modifier.weight(1f))
                 Button(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth(),
                     shape = RoundedCornerShape(3.dp),
                     onClick = {
                         viewModel.addTrip(tripTitle, tripImage)
@@ -82,7 +95,6 @@ class AddTripActivity : AppCompatActivity() {
             }
         }
     }
-
 }
 
 @Composable
@@ -116,7 +128,7 @@ fun PhotoItem(imageId: Int, tripImage: Int, onClick: (Int) -> Unit) {
             .border(
                 border = BorderStroke(
                     width = 1.dp,
-                    color = if (imageId == tripImage) Color.Magenta else Color.Gray
+                    color = if (imageId == tripImage) colorResource(id = R.color.purple_500) else Color.Gray
                 ),
                 shape = RoundedCornerShape(3.dp)
             )
