@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import com.example.itinerary.R
 import com.wkitinerary.ui.composables.DurationField
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 
 @AndroidEntryPoint
 class AddTripActivity : AppCompatActivity() {
@@ -59,6 +60,8 @@ class AddTripActivity : AppCompatActivity() {
         setContent {
             var tripTitle by remember { mutableStateOf("") }
             var tripImage by remember { mutableStateOf(0) }
+            var tripDepartureDate by remember { mutableStateOf("") }
+            var tripReturnDate by remember { mutableStateOf("") }
 
             Column(
                 modifier = Modifier
@@ -76,7 +79,7 @@ class AddTripActivity : AppCompatActivity() {
                     onValueChange = {
                         tripTitle = it
                     })
-                DurationField()
+                DurationField({ tripDepartureDate = it }, { tripReturnDate = it })
                 ImagePicker(tripImage) { selectedImageId ->
                     tripImage = selectedImageId
                 }
@@ -86,7 +89,7 @@ class AddTripActivity : AppCompatActivity() {
                         .fillMaxWidth(),
                     shape = RoundedCornerShape(3.dp),
                     onClick = {
-                        viewModel.addTrip(tripTitle, tripImage)
+                        viewModel.addTrip(tripTitle, tripImage, tripDepartureDate, tripReturnDate)
                         finish()
                     }
                 ) {

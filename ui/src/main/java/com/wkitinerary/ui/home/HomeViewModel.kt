@@ -25,7 +25,14 @@ class HomeViewModel @Inject constructor(
             try {
                 getAllTripUseCase().collect {
                     val items: MutableList<HomeItems> =
-                        it.map { trip -> HomeItems.Trip(trip.title, trip.image) }
+                        it.map { trip ->
+                            HomeItems.Trip(
+                                trip.title,
+                                trip.image,
+                                trip.departureDate,
+                                trip.returnDate
+                            )
+                        }
                             .toMutableList()
                     items.add(HomeItems.AddTrip)
 

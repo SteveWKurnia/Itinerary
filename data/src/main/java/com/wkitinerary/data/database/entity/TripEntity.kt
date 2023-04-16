@@ -11,5 +11,9 @@ data class TripEntity(
     @ColumnInfo(name = "title")
     val title: String,
     @ColumnInfo(name = "image")
-    val image: Int
+    val image: Int,
+    @ColumnInfo(name = "departure_date")
+    val departureDate: String,
+    @ColumnInfo(name = "return_date")
+    val returnDate: String,
 )

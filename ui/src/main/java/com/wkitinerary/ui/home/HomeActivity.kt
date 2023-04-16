@@ -11,6 +11,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,8 +27,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -39,11 +38,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.itinerary.R
-import com.wkitinerary.data.HomeRepositoryImpl
-import com.wkitinerary.data.database.ItineraryDatabase
-import com.wkitinerary.domain.Trip
-import com.wkitinerary.domain.usecase.AddTripUseCase
+import androidx.compose.ui.unit.sp
 import com.wkitinerary.ui.addtrip.AddTripActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -80,7 +75,9 @@ class HomeActivity : AppCompatActivity() {
                                 })
                                 is HomeItems.Trip -> TripItem(
                                     title = homeItem.title,
-                                    imageResource = homeItem.image
+                                    imageResource = homeItem.image,
+                                    departureDate = homeItem.departureDate,
+                                    returnDate = homeItem.returnDate
                                 )
                             }
                         }
@@ -92,7 +89,7 @@ class HomeActivity : AppCompatActivity() {
 }
 
 @Composable
-fun TripItem(title: String, imageResource: Int) {
+fun TripItem(title: String, imageResource: Int, departureDate: String, returnDate: String) {
     ItemContainer(
         modifier = Modifier.border(
             width = 1.dp,
@@ -107,12 +104,37 @@ fun TripItem(title: String, imageResource: Int) {
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
-            Text(
-                text = title,
-                color = Color.White,
-                modifier = Modifier.wrapContentSize(),
-                textAlign = TextAlign.Center
-            )
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = title,
+                    color = Color.White,
+                    modifier = Modifier.wrapContentSize(),
+                    textAlign = TextAlign.Center
+                )
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = departureDate,
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        modifier = Modifier.wrapContentSize(),
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        text = returnDate,
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        modifier = Modifier.wrapContentSize(),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
         }
     }
 }
