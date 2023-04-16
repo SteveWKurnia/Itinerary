@@ -9,16 +9,23 @@ import kotlinx.coroutines.flow.map
 
 class HomeRepositoryImpl(
     private val tripDao: TripDao
-): HomeRepository {
+) : HomeRepository {
 
     override suspend fun addTrip(trip: Trip) {
-        tripDao.addTrip(TripEntity(title = trip.title, image = trip.image))
+        tripDao.addTrip(
+            TripEntity(
+                title = trip.title,
+                image = trip.image,
+                returnDate = trip.returnDate,
+                departureDate = trip.departureDate
+            )
+        )
     }
 
     override suspend fun getTrips(): Flow<List<Trip>> {
         return tripDao.getAllTrip().map {
             it.map { trip ->
-                Trip(trip.title, trip.image)
+                Trip(trip.title, trip.image, trip.returnDate, trip.departureDate)
             }
         }
     }

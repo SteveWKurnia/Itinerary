@@ -7,7 +7,7 @@ import javax.inject.Inject
 class AddTripUseCase @Inject constructor(
     private val homeRepository: HomeRepository
 ) {
-    suspend fun invoke(trip: Trip) {
+    suspend operator fun invoke(trip: Trip) {
         homeRepository.addTrip(trip)
     }
 }

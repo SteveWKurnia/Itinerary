@@ -12,10 +12,10 @@ import javax.inject.Inject
 class AddTripViewModel @Inject constructor(
     private val useCase: AddTripUseCase
 ) : ViewModel() {
-    fun addTrip(tripTitle: String, tripImage: Int) {
+    fun addTrip(tripTitle: String, tripImage: Int, departureDate: String, returnDate: String) {
         viewModelScope.launch {
-            val trip = Trip(tripTitle, tripImage)
-            useCase.invoke(trip)
+            val trip = Trip(tripTitle, tripImage, departureDate, returnDate)
+            useCase(trip)
         }
     }
 }

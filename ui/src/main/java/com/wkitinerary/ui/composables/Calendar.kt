@@ -21,6 +21,7 @@ import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,20 +40,24 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun DurationField() {
+fun DurationField(departureDateCallback: (String) -> Unit, returnDateCallback: (String) -> Unit) {
     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-        CalendarField(Modifier.weight(1f))
-        CalendarField(Modifier.weight(1f))
+        CalendarField(Modifier.weight(1f), departureDateCallback)
+        CalendarField(Modifier.weight(1f), returnDateCallback)
     }
 }
 
 @Composable
-fun CalendarField(modifier: Modifier) {
+fun CalendarField(modifier: Modifier, callback: (String) -> Unit) {
     val (date, month, year) = getCurrentDate()
     var dateState by remember { mutableStateOf(date) }
     var monthState by remember { mutableStateOf(month) }
     var yearState by remember { mutableStateOf(year) }
 
+    LaunchedEffect(key1 = dateState, key2 = monthState, key3 = yearState) {
+        val dateString = "$yearState-$monthState-$dateState"
+        callback(dateString)
+    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier
             .height(250.dp)
