@@ -40,7 +40,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun DurationField(departureDateCallback: (String) -> Unit, returnDateCallback: (String) -> Unit) {
+fun DurationField(departureDateCallback: (Date) -> Unit, returnDateCallback: (Date) -> Unit) {
     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
         CalendarField(Modifier.weight(1f), departureDateCallback)
         CalendarField(Modifier.weight(1f), returnDateCallback)
@@ -48,7 +48,7 @@ fun DurationField(departureDateCallback: (String) -> Unit, returnDateCallback: (
 }
 
 @Composable
-fun CalendarField(modifier: Modifier, callback: (String) -> Unit) {
+fun CalendarField(modifier: Modifier, callback: (Date) -> Unit) {
     val (date, month, year) = getCurrentDate()
     var dateState by remember { mutableStateOf(date) }
     var monthState by remember { mutableStateOf(month) }
@@ -56,7 +56,8 @@ fun CalendarField(modifier: Modifier, callback: (String) -> Unit) {
 
     LaunchedEffect(key1 = dateState, key2 = monthState, key3 = yearState) {
         val dateString = "$yearState-$monthState-$dateState"
-        callback(dateString)
+        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT)
+        callback(formatter.parse(dateString) ?: Date())
     }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier

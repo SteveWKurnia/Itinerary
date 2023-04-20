@@ -1,6 +1,7 @@
 package com.wkitinerary.data
 
 import com.wkitinerary.data.database.dao.TripDao
+import com.wkitinerary.data.database.entity.DateEntity
 import com.wkitinerary.data.database.entity.TripEntity
 import com.wkitinerary.domain.HomeRepository
 import com.wkitinerary.domain.Trip
@@ -12,7 +13,7 @@ class HomeRepositoryImpl(
 ) : HomeRepository {
 
     override suspend fun addTrip(trip: Trip) {
-        tripDao.addTrip(
+        val id = tripDao.addTrip(
             TripEntity(
                 title = trip.title,
                 image = trip.image,
@@ -20,14 +21,16 @@ class HomeRepositoryImpl(
                 departureDate = trip.departureDate
             )
         )
+        trip.dates.forEach {
+            tripDao.addDate(DateEntity(tripId = id, date = it, activity = "Active!"))
+        }
     }
 
     override suspend fun getTrips(): Flow<List<Trip>> {
         return tripDao.getAllTrip().map {
             it.map { trip ->
-                Trip(trip.title, trip.image, trip.returnDate, trip.departureDate)
+                Trip(trip.title, trip.image, trip.departureDate, trip.returnDate, listOf())
             }
         }
     }
-
 }
