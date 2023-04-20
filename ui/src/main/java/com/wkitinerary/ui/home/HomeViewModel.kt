@@ -2,14 +2,14 @@ package com.wkitinerary.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.wkitinerary.domain.Trip
-import com.wkitinerary.domain.usecase.AddTripUseCase
 import com.wkitinerary.domain.usecase.GetAllTripUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,11 +26,12 @@ class HomeViewModel @Inject constructor(
                 getAllTripUseCase().collect {
                     val items: MutableList<HomeItems> =
                         it.map { trip ->
+                            val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT)
                             HomeItems.Trip(
                                 trip.title,
                                 trip.image,
-                                trip.departureDate,
-                                trip.returnDate
+                                formatter.format(trip.departureDate),
+                                formatter.format(trip.returnDate)
                             )
                         }
                             .toMutableList()
