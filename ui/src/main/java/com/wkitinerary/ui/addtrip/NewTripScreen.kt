@@ -1,10 +1,6 @@
 package com.wkitinerary.ui.addtrip
 
-import android.os.Bundle
-import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.appcompat.R.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -37,61 +33,56 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.itinerary.R
 import com.wkitinerary.ui.composables.DurationField
-import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
-@AndroidEntryPoint
-class AddTripActivity : AppCompatActivity() {
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NewTripScreen(
+    modifier: Modifier = Modifier,
+    viewModel: AddTripViewModel = hiltViewModel(),
+    onCreateClick: () -> Unit
+) {
+    var tripTitle by remember { mutableStateOf("") }
+    var tripImage by remember { mutableStateOf(0) }
+    var tripDepartureDate by remember { mutableStateOf(Date()) }
+    var tripReturnDate by remember { mutableStateOf(Date()) }
 
-    private val viewModel: AddTripViewModel by viewModels()
-
-    @OptIn(ExperimentalMaterial3Api::class)
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setContent {
-            var tripTitle by remember { mutableStateOf("") }
-            var tripImage by remember { mutableStateOf(0) }
-            var tripDepartureDate by remember { mutableStateOf(Date()) }
-            var tripReturnDate by remember { mutableStateOf(Date()) }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(all = 10.dp)
-            ) {
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 15.dp),
-                    value = tripTitle,
-                    label = {
-                        Text(text = "Trip Title")
-                    },
-                    onValueChange = {
-                        tripTitle = it
-                    })
-                DurationField({ tripDepartureDate = it }, { tripReturnDate = it })
-                ImagePicker(tripImage) { selectedImageId ->
-                    tripImage = selectedImageId
-                }
-                Spacer(modifier = Modifier.weight(1f))
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    shape = RoundedCornerShape(3.dp),
-                    onClick = {
-                        viewModel.addTrip(tripTitle, tripImage, tripDepartureDate, tripReturnDate)
-                        finish()
-                    }
-                ) {
-                    Text(text = "Create New Trip")
-                }
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(all = 10.dp)
+    ) {
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 15.dp),
+            value = tripTitle,
+            label = {
+                Text(text = "Trip Title")
+            },
+            onValueChange = {
+                tripTitle = it
+            })
+        DurationField({ tripDepartureDate = it }, { tripReturnDate = it })
+        ImagePicker(tripImage) { selectedImageId ->
+            tripImage = selectedImageId
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(3.dp),
+            onClick = {
+                viewModel.addTrip(tripTitle, tripImage, tripDepartureDate, tripReturnDate)
+                onCreateClick()
             }
+        ) {
+            Text(text = "Create New Trip")
         }
     }
+
 }
 
 @Composable

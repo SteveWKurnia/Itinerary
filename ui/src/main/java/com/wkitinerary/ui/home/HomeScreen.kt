@@ -1,10 +1,5 @@
 package com.wkitinerary.ui.home
 
-import android.content.Intent
-import android.os.Bundle
-import androidx.activity.compose.setContent
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -34,52 +29,38 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.wkitinerary.ui.addtrip.AddTripActivity
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import androidx.hilt.navigation.compose.hiltViewModel
 
-@AndroidEntryPoint
-class HomeActivity : AppCompatActivity() {
+@Composable
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel = hiltViewModel(),
+    onCreateClick: () -> Unit
+) {
+    val uiState = viewModel.uiState.collectAsState()
 
-    private val viewModel: HomeViewModel by viewModels()
+    LaunchedEffect(Unit) {
+        viewModel.getTrip()
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            val uiState = viewModel.uiState.collectAsState()
-            val context = LocalContext.current
-
-            LaunchedEffect(Unit) {
-                viewModel.getTrip()
-            }
-
-            when (uiState.value) {
-                HomeViewModel.UiState.Empty -> AddTripButton(onClick = {
-                    val intent = Intent(context, AddTripActivity::class.java)
-                    context.startActivity(intent)
-                })
-                is HomeViewModel.UiState.Success -> {
-                    LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        items((uiState.value as HomeViewModel.UiState.Success).trips) { homeItem ->
-                            when (homeItem) {
-                                HomeItems.AddTrip -> AddTripButton(onClick = {
-                                    val intent = Intent(context, AddTripActivity::class.java)
-                                    context.startActivity(intent)
-                                })
-                                is HomeItems.Trip -> TripItem(
-                                    title = homeItem.title,
-                                    imageResource = homeItem.image,
-                                    departureDate = homeItem.departureDate,
-                                    returnDate = homeItem.returnDate
-                                )
-                            }
+    Box(modifier = modifier.padding(all = 10.dp)) {
+        when (uiState.value) {
+            HomeViewModel.UiState.Empty -> AddTripButton(onClick = onCreateClick)
+            is HomeViewModel.UiState.Success -> {
+                LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    items((uiState.value as HomeViewModel.UiState.Success).trips) { homeItem ->
+                        when (homeItem) {
+                            HomeItems.AddTrip -> AddTripButton(onClick = onCreateClick)
+                            is HomeItems.Trip -> TripItem(
+                                title = homeItem.title,
+                                imageResource = homeItem.image,
+                                departureDate = homeItem.departureDate,
+                                returnDate = homeItem.returnDate
+                            )
                         }
                     }
                 }
@@ -140,13 +121,12 @@ fun TripItem(title: String, imageResource: Int, departureDate: String, returnDat
 }
 
 @Composable
-fun AddTripButton(onClick: suspend () -> Unit) {
+fun AddTripButton(onClick: () -> Unit) {
     val stroke = Stroke(
         width = 5f,
         pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
     )
 
-    val coroutineScope = CoroutineScope(Dispatchers.IO)
     ItemContainer(modifier = Modifier
         .drawBehind {
             drawRoundRect(
@@ -154,11 +134,7 @@ fun AddTripButton(onClick: suspend () -> Unit) {
                 style = stroke
             )
         }
-        .clickable {
-            coroutineScope.launch {
-                onClick()
-            }
-        }
+        .clickable { onClick() }
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -180,7 +156,6 @@ fun AddTripButton(onClick: suspend () -> Unit) {
 fun ItemContainer(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     Box(
         modifier = Modifier
-            .padding(horizontal = 10.dp)
             .height(100.dp)
             .fillMaxWidth()
             .then(modifier)
