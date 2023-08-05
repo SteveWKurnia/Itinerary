@@ -18,6 +18,9 @@ interface TripDao {
     @Query("SELECT * FROM trip")
     fun getAllTrip(): Flow<List<TripEntity>>
 
+    @Query("SELECT * FROM trip WHERE id=:tripId")
+    fun getTrip(tripId: Long?): Flow<TripEntity>
+
     @Query("SELECT * FROM date WHERE tripId=:tripId")
     fun getTripDates(tripId: Long): List<DateEntity>
 }

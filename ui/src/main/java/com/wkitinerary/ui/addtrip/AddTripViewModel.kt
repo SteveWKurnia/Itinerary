@@ -1,10 +1,14 @@
 package com.wkitinerary.ui.addtrip
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wkitinerary.domain.Trip
 import com.wkitinerary.domain.usecase.AddTripUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.*
 import java.util.Calendar.DATE
@@ -14,15 +18,23 @@ import javax.inject.Inject
 class AddTripViewModel @Inject constructor(
     private val useCase: AddTripUseCase
 ) : ViewModel() {
-    fun addTrip(tripTitle: String, tripImage: Int, departureDate: Date, returnDate: Date) {
-        val dates = getDates(departureDate, returnDate)
+
+    fun addTrip(tripTitle: String, tripImage: Int, departureDate: Date, returnDate: Date, onClick: (Long) -> Unit) {
+        val dates = getTripDates(departureDate, returnDate)
         viewModelScope.launch {
-            val trip = Trip(tripTitle, tripImage, departureDate, returnDate, dates)
-            useCase(trip)
+            val trip = Trip(
+                title = tripTitle,
+                image = tripImage,
+                departureDate = departureDate,
+                returnDate = returnDate,
+                dates = dates
+            )
+            val id = useCase(trip)
+            onClick(id)
         }
     }
 
-    private fun getDates(departureDate: Date, returnDate: Date): List<Date> {
+    private fun getTripDates(departureDate: Date, returnDate: Date): List<Date> {
         val dates = mutableListOf<Date>()
 
         val departureCalendar = Calendar.getInstance()

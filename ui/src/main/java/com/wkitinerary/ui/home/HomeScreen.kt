@@ -39,7 +39,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
-    onCreateClick: () -> Unit
+    onCreateClick: () -> Unit,
+    onTripClick: (Long) -> Unit
 ) {
     val uiState = viewModel.uiState.collectAsState()
 
@@ -56,10 +57,12 @@ fun HomeScreen(
                         when (homeItem) {
                             HomeItems.AddTrip -> AddTripButton(onClick = onCreateClick)
                             is HomeItems.Trip -> TripItem(
+                                id = homeItem.id,
                                 title = homeItem.title,
                                 imageResource = homeItem.image,
                                 departureDate = homeItem.departureDate,
-                                returnDate = homeItem.returnDate
+                                returnDate = homeItem.returnDate,
+                                onTripClick = onTripClick
                             )
                         }
                     }
@@ -70,13 +73,22 @@ fun HomeScreen(
 }
 
 @Composable
-fun TripItem(title: String, imageResource: Int, departureDate: String, returnDate: String) {
+fun TripItem(
+    id: Long?,
+    title: String,
+    imageResource: Int,
+    departureDate: String,
+    returnDate: String,
+    onTripClick: (Long) -> Unit
+) {
     ItemContainer(
-        modifier = Modifier.border(
-            width = 1.dp,
-            shape = RoundedCornerShape(3.dp),
-            color = Color.White
-        )
+        modifier = Modifier
+            .border(
+                width = 1.dp,
+                shape = RoundedCornerShape(3.dp),
+                color = Color.White
+            )
+            .clickable { id?.let(onTripClick) }
     ) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Image(
