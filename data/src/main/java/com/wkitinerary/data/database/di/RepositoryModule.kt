@@ -1,8 +1,8 @@
 package com.wkitinerary.data.database.di
 
-import com.wkitinerary.data.HomeRepositoryImpl
+import com.wkitinerary.data.TripRepositoryImpl
 import com.wkitinerary.data.database.dao.TripDao
-import com.wkitinerary.domain.HomeRepository
+import com.wkitinerary.domain.TripRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,8 +13,8 @@ import dagger.hilt.android.components.ActivityRetainedComponent
 class RepositoryModule {
 
     @Provides
-    fun providesHomeRepository(tripDao: TripDao): HomeRepository {
-        return HomeRepositoryImpl(tripDao)
+    fun providesHomeRepository(tripDao: TripDao): TripRepository {
+        return TripRepositoryImpl(tripDao)
     }
 
 }

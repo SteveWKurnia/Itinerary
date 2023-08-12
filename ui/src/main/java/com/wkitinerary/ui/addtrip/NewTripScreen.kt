@@ -43,7 +43,7 @@ import java.util.*
 fun NewTripScreen(
     modifier: Modifier = Modifier,
     viewModel: AddTripViewModel = hiltViewModel(),
-    onCreateClick: () -> Unit
+    onCreateClick: (Long) -> Unit
 ) {
     var tripTitle by remember { mutableStateOf("") }
     var tripImage by remember { mutableStateOf(0) }
@@ -75,8 +75,9 @@ fun NewTripScreen(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(3.dp),
             onClick = {
-                viewModel.addTrip(tripTitle, tripImage, tripDepartureDate, tripReturnDate)
-                onCreateClick()
+                viewModel.addTrip(tripTitle, tripImage, tripDepartureDate, tripReturnDate) {
+                    onCreateClick(it)
+                }
             }
         ) {
             Text(text = "Create New Trip")

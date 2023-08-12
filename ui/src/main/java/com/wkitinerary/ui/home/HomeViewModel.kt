@@ -28,6 +28,7 @@ class HomeViewModel @Inject constructor(
                         it.map { trip ->
                             val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT)
                             HomeItems.Trip(
+                                trip.id,
                                 trip.title,
                                 trip.image,
                                 formatter.format(trip.departureDate),
